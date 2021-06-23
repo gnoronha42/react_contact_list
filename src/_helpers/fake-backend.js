@@ -1,7 +1,6 @@
 import { Gender } from './gender'
 
 export function configureFakeBackend() {
-    // array in local storage for user records
     let users = JSON.parse(localStorage.getItem('users')) || [{ 
         id: 1,
         firstName: 'Gabriel',
@@ -11,11 +10,10 @@ export function configureFakeBackend() {
         password: 'gabriel123'
     }];
 
-    // monkey patch fetch to setup fake backend
+  
     let realFetch = window.fetch;
     window.fetch = function (url, opts) {
         return new Promise((resolve, reject) => {
-            // wrap in timeout to simulate server api call
             setTimeout(handleRoute, 500);
 
             function handleRoute() {
@@ -32,14 +30,13 @@ export function configureFakeBackend() {
                     case url.match(/\/users\/\d+$/) && method === 'DELETE':
                         return deleteUser();
                     default:
-                        // pass through any requests not handled above
                         return realFetch(url, opts)
                             .then(response => resolve(response))
                             .catch(error => reject(error));
                 }
             }
 
-            // route functions
+        
 
             function getUsers() {
                 return ok(users);
@@ -57,7 +54,6 @@ export function configureFakeBackend() {
                     return error(`Email ${user.email} já utilizado`);
                 }
 
-                // assign user id and a few other properties then save
                 user.id = newUserId();
                 user.dateCreated = new Date().toISOString();
                 delete user.confirmPassword;
@@ -71,14 +67,11 @@ export function configureFakeBackend() {
                 let params = body();
                 let user = users.find(x => x.id === idFromUrl());
 
-                // only update password if included
                 if (!params.password) {
                     delete params.password;
                 }
-                // don't save confirm password
                 delete params.confirmPassword;
 
-                // update and save user
                 Object.assign(user, params);
                 localStorage.setItem('users', JSON.stringify(users));
 
@@ -92,7 +85,6 @@ export function configureFakeBackend() {
                 return ok();
             }
     
-            // helper functions
 
             function ok(body) {
                 resolve({ ok: true, text: () => Promise.resolve(JSON.stringify(body)) });
