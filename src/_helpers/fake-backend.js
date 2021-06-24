@@ -6,6 +6,7 @@ export function configureFakeBackend() {
         firstName: 'Gabriel',
         lastName: 'Ximenes',
         email: 'gabrielximenesnoronha@gmail.com',
+        phone: '92991805721',
         gender: Gender.User,
         password: 'gabriel123'
     }];
